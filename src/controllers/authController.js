@@ -3,6 +3,9 @@ const { errorResponse, successResponse } = require("../utility/response");
 const bcrypt = require("bcrypt");
 const { generateToken } = require("../utility/token");
 require("dotenv").config();
+
+
+
 const userRegistration = async (req, res) => {
     const { email, password, confirm_password, full_name } = req.body;
 
@@ -115,8 +118,33 @@ const userProfile = async (req, res) => {
 };
 
 
+
+const userProfileUpdate = async (req, res) => {
+    const { full_name } = req.body;
+    const id = req.headers.id;
+
+    const filter = { _id: id };
+    const update = { full_name }; // fields to update
+
+    try {
+        const result = await userModel.updateOne(filter, update);
+
+        if (result.matchedCount === 0) {
+            return errorResponse(res, 404, "User not found", null);
+        }
+
+        successResponse(res, 200, "User profile updated successfully", null);
+
+    } catch (error) {
+        console.error(error);
+        errorResponse(res, 500, "Something went wrong", error.message);
+    }
+};
+
+
 module.exports = {
     userRegistration,
     userLogin,
-    userProfile
+    userProfile,
+    userProfileUpdate
 }
