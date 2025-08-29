@@ -1,5 +1,5 @@
 const express = require("express");
-const { userRegistration, userLogin, userProfile, userProfileUpdate } = require("../controllers/authController");
+const { userRegistration, userLogin, userProfile, userProfileUpdate, sendOtp, userOtpVerify, passwordReset, } = require("../controllers/authController");
 const { isLogin } = require("../middleware/middleware");
 const router = express.Router();
 
@@ -9,6 +9,12 @@ router.post(`/user-registration`, userRegistration);
 router.post("/login", userLogin);
 router.get("/user-profile", isLogin, userProfile);
 router.put("/user-profile-update", isLogin, userProfileUpdate);
+
+// forget password api 
+
+router.post("/send-otp", sendOtp );
+router.post("/otp-verify" , userOtpVerify);
+router.post("/reset-password", passwordReset )
 
 
 
