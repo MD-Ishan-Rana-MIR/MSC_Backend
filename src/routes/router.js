@@ -1,6 +1,8 @@
 const express = require("express");
 const { userRegistration, userLogin, userProfile, userProfileUpdate, sendOtp, userOtpVerify, passwordReset, } = require("../controllers/authController");
-const { isLogin } = require("../middleware/middleware");
+const { isLogin, isAdmin } = require("../middleware/middleware");
+const { createCategory, singleCategory, categoryUpdate } = require("../controllers/categoryController");
+const upload = require("../middleware/imageMiddlewar");
 const router = express.Router();
 
 // auth api 
@@ -14,7 +16,15 @@ router.put("/user-profile-update", isLogin, userProfileUpdate);
 
 router.post("/send-otp", sendOtp );
 router.post("/otp-verify" , userOtpVerify);
-router.post("/reset-password", passwordReset )
+router.post("/reset-password", passwordReset );
+
+// category related api 
+
+router.post(`/create-category`,upload.single("image") ,isLogin,isAdmin ,createCategory);
+router.get("/single-category/:category_id", singleCategory );
+router.put("/category-update/:id" , upload.single("image") ,isLogin,isAdmin, categoryUpdate)
+
+
 
 
 
