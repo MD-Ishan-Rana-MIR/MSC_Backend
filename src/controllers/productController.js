@@ -153,9 +153,9 @@ const updateProduct = async (req, res) => {
                 }
             });
 
-            product.product_image = images.length > 0 ? images : ["/uploads/default.png"];
+            product.product_image = images.length > 0 ? images : product.product_image;
         } else {
-            // user did not provide new images → keep old images or set default
+            // user did not provide new images → keep old images
             if (!product.product_image || product.product_image.length === 0) {
                 product.product_image = ["/uploads/default.png"];
             }

@@ -51,9 +51,6 @@ router.post("/product-upload", upload.fields([
 router.get("/single-product/:id", singleProduct);
 
 
-
-
-
 router.put( "/update/:id",upload.fields([
         { name: "product_image[0]", maxCount: 1 },
         { name: "product_image[1]", maxCount: 1 },
