@@ -1,6 +1,8 @@
 const productModel = require("../models/productModel");
 const fs = require("fs");
 const path = require("path");
+const { errorResponse } = require("../utility/response");
+const { default: mongoose } = require("mongoose");
 const createProduct = async (req, res) => {
     try {
         const { category_id, brand_id, product_name, product_type, price, discount_price, product_color } = req.body;
@@ -42,6 +44,65 @@ const createProduct = async (req, res) => {
             return res.status(400).json({ message: "File too large. Max 5MB allowed." });
         }
         res.status(500).json({ error: error.message });
+    }
+};
+
+const singleProduct = async (req, res) => {
+    const productId = req.params.id;
+
+    const isMatch = { $match: { _id: new mongoose.Types.ObjectId(productId) } };
+
+    try {
+        const joinWithCategoryId = {
+            $lookup: {
+                from: "categories",
+                localField: "category_id",
+                foreignField: "_id",
+                as: "category"
+            }
+        };
+
+        const unwindCategory = { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } };
+
+        const joinWithBrandId = {
+            $lookup: {
+                from: "brands",
+                localField: "brand_id",
+                foreignField: "_id",
+                as: "brand"
+            }
+        };
+
+        const unwindBrand = { $unwind: { path: "$brand", preserveNullAndEmptyArrays: true } };
+
+        const product = await productModel.aggregate([
+            isMatch,
+            joinWithCategoryId,
+            unwindCategory,
+            joinWithBrandId,
+            unwindBrand
+        ]);
+
+        if (!product || product.length === 0) {
+            return res.status(404).json({
+                status: "fail",
+                msg: "Product not found"
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            msg: "Single product retrieved successfully",
+            data: product[0] // return the single product object
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            status: "error",
+            msg: "Something went wrong",
+            error: error.message
+        });
     }
 };
 
@@ -112,5 +173,6 @@ const updateProduct = async (req, res) => {
 
 module.exports = {
     createProduct,
-    updateProduct
+    updateProduct,
+    singleProduct
 }

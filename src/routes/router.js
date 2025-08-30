@@ -4,7 +4,7 @@ const { isLogin, isAdmin } = require("../middleware/middleware");
 const { createCategory, singleCategory, categoryUpdate, categoryDelete, allCategory } = require("../controllers/categoryController");
 const upload = require("../middleware/imageMiddlewar");
 const { createBrand, allBrand, singleBrand, brandUpdate, brandDelete } = require("../controllers/brandController");
-const { createProduct, updateProduct } = require("../controllers/productController");
+const { createProduct, updateProduct, singleProduct } = require("../controllers/productController");
 const router = express.Router();
 
 // auth api 
@@ -47,6 +47,13 @@ router.post("/product-upload", upload.fields([
     { name: "product_image[2]", maxCount: 1 },
     { name: "product_image[3]", maxCount: 1 }
 ]), isLogin, isAdmin, createProduct);
+
+router.get("/single-product/:id", singleProduct);
+
+
+
+
+
 router.put( "/update/:id",upload.fields([
         { name: "product_image[0]", maxCount: 1 },
         { name: "product_image[1]", maxCount: 1 },
@@ -55,6 +62,8 @@ router.put( "/update/:id",upload.fields([
     ]),
     isLogin,isAdmin,updateProduct
 );
+
+
 
 
 
