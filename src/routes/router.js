@@ -1,7 +1,7 @@
 const express = require("express");
 const { userRegistration, userLogin, userProfile, userProfileUpdate, sendOtp, userOtpVerify, passwordReset, } = require("../controllers/authController");
 const { isLogin, isAdmin } = require("../middleware/middleware");
-const { createCategory, singleCategory, categoryUpdate } = require("../controllers/categoryController");
+const { createCategory, singleCategory, categoryUpdate, categoryDelete, allCategory } = require("../controllers/categoryController");
 const upload = require("../middleware/imageMiddlewar");
 const router = express.Router();
 
@@ -21,8 +21,10 @@ router.post("/reset-password", passwordReset );
 // category related api 
 
 router.post(`/create-category`,upload.single("image") ,isLogin,isAdmin ,createCategory);
+router.get("/all-category", allCategory );
 router.get("/single-category/:category_id", singleCategory );
-router.put("/category-update/:id" , upload.single("image") ,isLogin,isAdmin, categoryUpdate)
+router.put("/category-update/:id" , upload.single("image") ,isLogin,isAdmin, categoryUpdate);
+router.delete("/category-deleete/:id", isLogin ,isAdmin, categoryDelete )
 
 
 
