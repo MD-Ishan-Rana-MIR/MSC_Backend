@@ -15,6 +15,6 @@ const brandSchema = new Schema({
 });
 
 
-const brandModel = model("brand",brandSchema);
+const brandModel = model("brands",brandSchema);
 
 module.exports = brandModel;

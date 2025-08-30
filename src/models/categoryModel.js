@@ -15,6 +15,6 @@ const categorySchema = new Schema({
 });
 
 
-const categoryModel = model("category",categorySchema);
+const categoryModel = model("categories",categorySchema);
 
 module.exports = categoryModel;
