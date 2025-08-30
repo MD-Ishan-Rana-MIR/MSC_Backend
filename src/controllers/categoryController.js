@@ -57,8 +57,32 @@ const singleCategory = async (req, res) => {
     }
 };
 
+const allCategory = async (req, res) => {
+    try {
+        const categoryData = await categoryModel.find().sort({ createdAt: -1 });
+        if(categoryData.length===0){
+            return(
+                res.status(404).json({
+                    status : "fail",
+                    message : "Category not found"
+                })
+            )
+        }
+        return res.status(200).json({
+            success: true,
+            data: categoryData
+        });
+    } catch (error) {
+        return res.status(500).json({
+            satus: "fail",
+            message: "Server error",
+            error: error.message
+        });
+    }
+};
 
-const categoryUpdate = async (req,res) => {
+
+const categoryUpdate = async (req, res) => {
     try {
         const categoryId = req.params.id;
         const { category_name } = req.body;
@@ -90,6 +114,31 @@ const categoryUpdate = async (req,res) => {
         }
         res.status(500).json({ error: error.message });
     }
+};
+
+const categoryDelete = async (req, res) => {
+    const categoryId = req.params.id;
+    try {
+        const filter = {
+            _id: categoryId
+        };
+        const categoryData = await categoryModel.findOne(filter);
+        if (!categoryData) {
+            return (
+                res.status(404).json({
+                    status: "fail",
+                    msg: "Category not found"
+                })
+            )
+        }
+        const data = await categoryModel.deleteOne(filter);
+        return res.status(200).json({
+            status: "success",
+            msg: "Category delete successfully"
+        })
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 }
 
 
@@ -97,4 +146,4 @@ const categoryUpdate = async (req,res) => {
 
 
 
-module.exports = { createCategory, singleCategory, categoryUpdate };
+module.exports = { createCategory, singleCategory, categoryUpdate, categoryDelete,allCategory };
