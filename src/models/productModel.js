@@ -27,7 +27,6 @@ const productSchema = new Schema({
     },
     discount_price: {
         type: Number,
-        required: true
     },
     product_color: [
         {
