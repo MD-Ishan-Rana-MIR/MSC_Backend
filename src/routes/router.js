@@ -3,6 +3,7 @@ const { userRegistration, userLogin, userProfile, userProfileUpdate, sendOtp, us
 const { isLogin, isAdmin } = require("../middleware/middleware");
 const { createCategory, singleCategory, categoryUpdate, categoryDelete, allCategory } = require("../controllers/categoryController");
 const upload = require("../middleware/imageMiddlewar");
+const { createBrand, allBrand, singleBrand, brandUpdate, brandDelete } = require("../controllers/brandController");
 const router = express.Router();
 
 // auth api 
@@ -24,7 +25,17 @@ router.post(`/create-category`,upload.single("image") ,isLogin,isAdmin ,createCa
 router.get("/all-category", allCategory );
 router.get("/single-category/:category_id", singleCategory );
 router.put("/category-update/:id" , upload.single("image") ,isLogin,isAdmin, categoryUpdate);
-router.delete("/category-deleete/:id", isLogin ,isAdmin, categoryDelete )
+router.delete("/category-deleete/:id", isLogin ,isAdmin, categoryDelete );
+
+
+// brand related api 
+
+
+router.post("/brand-create", upload.single("image"), isLogin,isAdmin, createBrand);
+router.get("/all-brand", allBrand );
+router.get("/single-brand/:brand_id", singleBrand );
+router.put("/brand-update/:id", upload.single("image"), isLogin,isAdmin,brandUpdate);
+router.delete("/brand-delete/:id" ,isLogin, isAdmin,brandDelete );
 
 
 
