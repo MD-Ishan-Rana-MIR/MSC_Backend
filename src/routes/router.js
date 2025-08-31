@@ -5,7 +5,7 @@ const { createCategory, singleCategory, categoryUpdate, categoryDelete, allCateg
 const upload = require("../middleware/imageMiddlewar");
 const { createBrand, allBrand, singleBrand, brandUpdate, brandDelete } = require("../controllers/brandController");
 const { createProduct, updateProduct, singleProduct } = require("../controllers/productController");
-const { addWish, wishListDetails, wishList } = require("../controllers/wishController");
+const { addWish, wishListDetails, wishList, deleteWish } = require("../controllers/wishController");
 const router = express.Router();
 
 // auth api 
@@ -70,6 +70,7 @@ router.put("/update/:id", upload.fields([
 router.post("/add-to-wish", isLogin, addWish);
 router.get("/wish-list", isLogin, wishList);
 router.get("/wish-details/:id", isLogin, wishListDetails);
+router.delete("/wish-delete/:id" , isLogin,deleteWish )
 
 
 
