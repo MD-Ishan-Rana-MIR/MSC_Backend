@@ -5,6 +5,7 @@ const { createCategory, singleCategory, categoryUpdate, categoryDelete, allCateg
 const upload = require("../middleware/imageMiddlewar");
 const { createBrand, allBrand, singleBrand, brandUpdate, brandDelete } = require("../controllers/brandController");
 const { createProduct, updateProduct, singleProduct } = require("../controllers/productController");
+const { addWish, wishListDetails, wishList } = require("../controllers/wishController");
 const router = express.Router();
 
 // auth api 
@@ -51,15 +52,24 @@ router.post("/product-upload", upload.fields([
 router.get("/single-product/:id", singleProduct);
 
 
-router.put( "/update/:id",upload.fields([
-        { name: "product_image[0]", maxCount: 1 },
-        { name: "product_image[1]", maxCount: 1 },
-        { name: "product_image[2]", maxCount: 1 },
-        { name: "product_image[3]", maxCount: 1 }
-    ]),
-    isLogin,isAdmin,updateProduct
+router.put("/update/:id", upload.fields([
+    { name: "product_image[0]", maxCount: 1 },
+    { name: "product_image[1]", maxCount: 1 },
+    { name: "product_image[2]", maxCount: 1 },
+    { name: "product_image[3]", maxCount: 1 }
+]),
+    isLogin, isAdmin, updateProduct
 );
 
+
+
+
+
+// wish related api 
+
+router.post("/add-to-wish", isLogin, addWish);
+router.get("/wish-list", isLogin, wishList);
+router.get("/wish-details/:id", isLogin, wishListDetails);
 
 
 
