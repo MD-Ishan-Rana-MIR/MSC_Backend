@@ -6,7 +6,8 @@ const upload = require("../middleware/imageMiddlewar");
 const { createBrand, allBrand, singleBrand, brandUpdate, brandDelete } = require("../controllers/brandController");
 const { createProduct, updateProduct, singleProduct } = require("../controllers/productController");
 const { addWish, wishListDetails, wishList, deleteWish } = require("../controllers/wishController");
-const { addToCart, cartList } = require("../controllers/cartController");
+const { addToCart, cartList, cartDetails, cartDelete } = require("../controllers/cartController");
+const { createBlog, allBlog, blogByUser, blogDetails, blogUpdate, blogDelete } = require("../controllers/blogController");
 const router = express.Router();
 
 // auth api 
@@ -79,7 +80,21 @@ router.delete("/wish-delete/:id", isLogin, deleteWish);
 
 
 router.post("/add-to-cart", isLogin, addToCart);
-router.get("/cart-list", isLogin , cartList )
+router.get("/cart-list", isLogin, cartList);
+router.get("/cart-details/:id", isLogin, cartDetails);
+router.delete("/cart-delete/:id", isLogin, cartDelete);
+
+
+
+// blog related api 
+
+
+router.post("/blog-create", upload.single("image"), isLogin, createBlog);
+router.get("/all-blog", allBlog);
+router.get("/blog-by-user", isLogin, blogByUser);
+router.get("/blog-details/:id", blogDetails);
+router.put("/blog-update/:id", isLogin,blogUpdate);
+router.delete(`/blog-delete/:id`, isLogin,blogDelete)
 
 
 
