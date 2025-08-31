@@ -68,7 +68,7 @@ const wishList = async (req, res) => {
         }
 
 
-        successResponse(res,200,"Wish list find successfully", wishData );
+        successResponse(res, 200, "Wish list find successfully", wishData);
 
 
 
@@ -141,6 +141,34 @@ const wishListDetails = async (req, res) => {
         errorResponse(res, 500, "Something went worng", error);
 
     }
+};
+
+
+const deleteWish = async (req, res) => {
+    const wishId = req.params.id;
+    const filter = {
+        _id: wishId
+    };
+    try {
+        const wishData = await wishModel.deleteOne(filter);
+        if (!wishData) {
+            return (
+                res.status(404).json({
+                    status: "fail",
+                    msg: "Wish data not found"
+                })
+            )
+        }
+
+
+        successResponse(res, 200, "Wish delete successfully", wishData);
+
+
+
+    } catch (error) {
+        errorResponse(res, 500, "Something went worng", error)
+
+    }
 }
 
 
@@ -151,5 +179,6 @@ const wishListDetails = async (req, res) => {
 module.exports = {
     addWish,
     wishListDetails,
-    wishList
+    wishList,
+    deleteWish
 }
