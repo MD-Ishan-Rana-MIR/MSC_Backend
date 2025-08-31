@@ -8,7 +8,7 @@ const createCategory = async (req, res) => {
 
         if (!category_name) {
             return res.status(400).json({ message: "Category name is required" });
-        }
+        }c
 
         if (!req.file) {
             return res.status(400).json({ message: "Image file is required" });
@@ -80,7 +80,6 @@ const allCategory = async (req, res) => {
         });
     }
 };
-
 
 const categoryUpdate = async (req, res) => {
     try {
