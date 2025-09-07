@@ -10,9 +10,9 @@ require("dotenv").config();
 
 
 const userRegistration = async (req, res) => {
-    const { email, password, confirm_password, full_name } = req.body;
-
     try {
+        const { email, password, confirm_password, full_name, avatar } = req.body;
+
         // Check if email exists
         const existsEmail = await userModel.findOne({ email });
         if (existsEmail) {
@@ -24,17 +24,17 @@ const userRegistration = async (req, res) => {
             return errorResponse(res, 400, "User password does not match", null);
         }
 
-        // Hash only the password
+        // Hash password
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Save only one hashed password
+        // Create new user (exclude confirm_password)
         const newUser = await userModel.create({
             full_name,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            avatar: avatar || "https://res.cloudinary.com/demo/image/upload/default-avatar.png"
         });
-
 
         return res.status(201).json({
             success: true,
@@ -122,11 +122,11 @@ const userProfile = async (req, res) => {
 
 
 const userProfileUpdate = async (req, res) => {
-    const { full_name } = req.body;
+    const reqBody = req.body;
     const id = req.headers.id;
 
     const filter = { _id: id };
-    const update = { full_name }; // fields to update
+    const update = { $set: reqBody }; // ✅ $set ব্যবহার করে direct fields update
 
     try {
         const result = await userModel.updateOne(filter, update);

@@ -1,8 +1,7 @@
 
 const brandModel = require("../models/brandModel");
 const { errorResponse, successResponse } = require("../utility/response");
-const fs = require("fs");
-const path = require("path");
+
 
 const createBrand = async (req, res) => {
     try {

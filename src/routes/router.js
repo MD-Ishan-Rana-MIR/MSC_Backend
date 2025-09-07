@@ -8,6 +8,7 @@ const { createProduct, updateProduct, singleProduct } = require("../controllers/
 const { addWish, wishListDetails, wishList, deleteWish } = require("../controllers/wishController");
 const { addToCart, cartList, cartDetails, cartDelete } = require("../controllers/cartController");
 const { createBlog, allBlog, blogByUser, blogDetails, blogUpdate, blogDelete } = require("../controllers/blogController");
+const { createInvoice } = require("../controllers/invoiceController");
 const router = express.Router();
 
 // auth api 
@@ -67,6 +68,16 @@ router.get("/blog-by-user", isLogin, blogByUser);
 router.get("/blog-details/:id", blogDetails);
 router.put("/blog-update/:id", isLogin, blogUpdate);
 router.delete(`/blog-delete/:id`, isLogin, blogDelete);
+
+// invoice api 
+
+router.post("/create-invoice", isLogin,createInvoice);
+
+
+
+
+
+
 
 
 
