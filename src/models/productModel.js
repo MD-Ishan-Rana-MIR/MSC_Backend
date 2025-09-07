@@ -62,7 +62,11 @@ const productSchema = new Schema({
     size : {
         type : String,
         required : true
+    },
+    product_des : {
+        type : String
     }
+    
 }, { timestamps: true, versionKey: false });
 
 const productModel = model("products",productSchema);

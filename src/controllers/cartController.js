@@ -5,7 +5,7 @@ const { successResponse, errorResponse } = require("../utility/response");
 
 const addToCart = async (req, res) => {
     const userId = req.headers.id;
-    const { productId, quentity } = req.body;
+    const { productId, quentity,size,color } = req.body;
 
     try {
         let cartItem = await cartModel.findOne({ productId });
@@ -17,7 +17,7 @@ const addToCart = async (req, res) => {
             })
         }
 
-        const cartData = await cartModel.create({ userId, productId, quentity });
+        const cartData = await cartModel.create({ userId, productId, quentity,size,color });
         successResponse(res, 201, "Product added to cart successfully", cartData);
 
     } catch (error) {
