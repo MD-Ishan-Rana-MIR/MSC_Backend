@@ -25,47 +25,25 @@ router.post("/reset-password", passwordReset);
 
 // category related api 
 
-router.post(`/create-category`, upload.single("image"), isLogin, isAdmin, createCategory);
+router.post(`/create-category`, isLogin, isAdmin, createCategory);
 router.get("/all-category", allCategory);
 router.get("/single-category/:category_id", singleCategory);
-router.put("/category-update/:id", upload.single("image"), isLogin, isAdmin, categoryUpdate);
+router.put("/category-update/:id", isLogin, isAdmin, categoryUpdate);
 router.delete("/category-deleete/:id", isLogin, isAdmin, categoryDelete);
-
 
 // brand related api 
 
-
-router.post("/brand-create", upload.single("image"), isLogin, isAdmin, createBrand);
+router.post("/brand-create", isLogin, isAdmin, createBrand);
 router.get("/all-brand", allBrand);
 router.get("/single-brand/:brand_id", singleBrand);
-router.put("/brand-update/:id", upload.single("image"), isLogin, isAdmin, brandUpdate);
+router.put("/brand-update/:id", isLogin, isAdmin, brandUpdate);
 router.delete("/brand-delete/:id", isLogin, isAdmin, brandDelete);
-
 
 // product controller 
 
-router.post("/product-upload", upload.fields([
-    { name: "product_image[0]", maxCount: 1 },
-    { name: "product_image[1]", maxCount: 1 },
-    { name: "product_image[2]", maxCount: 1 },
-    { name: "product_image[3]", maxCount: 1 }
-]), isLogin, isAdmin, createProduct);
-
+router.post("/product-upload", isLogin, isAdmin, createProduct);
 router.get("/single-product/:id", singleProduct);
-
-
-router.put("/update/:id", upload.fields([
-    { name: "product_image[0]", maxCount: 1 },
-    { name: "product_image[1]", maxCount: 1 },
-    { name: "product_image[2]", maxCount: 1 },
-    { name: "product_image[3]", maxCount: 1 }
-]),
-    isLogin, isAdmin, updateProduct
-);
-
-
-
-
+router.put("/update/:id", isLogin, isAdmin, updateProduct);
 
 // wish related api 
 
@@ -74,27 +52,21 @@ router.get("/wish-list", isLogin, wishList);
 router.get("/wish-details/:id", isLogin, wishListDetails);
 router.delete("/wish-delete/:id", isLogin, deleteWish);
 
-
-
 // cart related api 
-
 
 router.post("/add-to-cart", isLogin, addToCart);
 router.get("/cart-list", isLogin, cartList);
 router.get("/cart-details/:id", isLogin, cartDetails);
 router.delete("/cart-delete/:id", isLogin, cartDelete);
 
-
-
 // blog related api 
-
 
 router.post("/blog-create", upload.single("image"), isLogin, createBlog);
 router.get("/all-blog", allBlog);
 router.get("/blog-by-user", isLogin, blogByUser);
 router.get("/blog-details/:id", blogDetails);
-router.put("/blog-update/:id", isLogin,blogUpdate);
-router.delete(`/blog-delete/:id`, isLogin,blogDelete)
+router.put("/blog-update/:id", isLogin, blogUpdate);
+router.delete(`/blog-delete/:id`, isLogin, blogDelete);
 
 
 

@@ -3,28 +3,19 @@ const fs = require("fs");
 const path = require("path");
 const { errorResponse } = require("../utility/response");
 const { default: mongoose } = require("mongoose");
+
 const createProduct = async (req, res) => {
     try {
-        const { category_id, brand_id, product_name, product_type, price, discount_price, product_color } = req.body;
+        const { category_id, brand_id, product_name, product_type, price, discount_price, product_color, size, product_image_1, product_image_2, product_image_3, product_image_4 } = req.body;
 
         if (!category_id || !brand_id || !product_name || !price || !product_color) {
             return res.status(400).json({ message: "All required fields must be provided" });
         }
 
-        if (!req.files || Object.keys(req.files).length === 0) {
-            return res.status(400).json({ message: "At least one product image is required" });
-        }
 
-        const keys = ["product_image[0]", "product_image[1]", "product_image[2]", "product_image[3]"];
-        const images = [];
 
-        keys.forEach(key => {
-            if (req.files[key]) {
-                // absolute path থেকে relative path বের করা
-                const relativePath = path.join("/uploads", path.basename(req.files[key][0].path));
-                images.push(relativePath.replace(/\\/g, "/")); // Windows fix
-            }
-        });
+
+
 
         const product = await productModel.create({
             category_id,
@@ -34,7 +25,11 @@ const createProduct = async (req, res) => {
             price,
             discount_price,
             product_color: JSON.parse(product_color),
-            product_image: images
+            product_image_1,
+            product_image_2,
+            product_image_3,
+            product_image_4,
+            size
         });
 
         res.status(201).json({ message: "Product uploaded successfully.", product });

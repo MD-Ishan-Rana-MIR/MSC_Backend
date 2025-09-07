@@ -4,26 +4,18 @@ const { errorResponse, successResponse } = require("../utility/response");
 
 const createCategory = async (req, res) => {
     try {
-        const { category_name } = req.body;
+        const { category_name, image } = req.body;
 
         if (!category_name) {
             return res.status(400).json({ message: "Category name is required" });
-        }c
-
-        if (!req.file) {
-            return res.status(400).json({ message: "Image file is required" });
         }
-
         const category = await categoryModel.create({
             category_name,
-            image: `/uploads/${req.file.filename}`, // saved path
+            image
         });
 
         res.status(201).json({ message: "Category created", category });
     } catch (error) {
-        if (error.code === "LIMIT_FILE_SIZE") {
-            return res.status(400).json({ message: "File too large. Max 5MB allowed." });
-        }
         res.status(500).json({ error: error.message });
     }
 };
@@ -60,11 +52,11 @@ const singleCategory = async (req, res) => {
 const allCategory = async (req, res) => {
     try {
         const categoryData = await categoryModel.find().sort({ createdAt: -1 });
-        if(categoryData.length===0){
-            return(
+        if (categoryData.length === 0) {
+            return (
                 res.status(404).json({
-                    status : "fail",
-                    message : "Category not found"
+                    status: "fail",
+                    message: "Category not found"
                 })
             )
         }
@@ -84,33 +76,26 @@ const allCategory = async (req, res) => {
 const categoryUpdate = async (req, res) => {
     try {
         const categoryId = req.params.id;
-        const { category_name } = req.body;
+        const { category_name, image } = req.body;
 
         const category = await categoryModel.findById(categoryId);
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
         }
 
-        if (req.file) {
-            if (category.image) {
-                const oldImagePath = path.join(__dirname, "../", category.image);
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-            }
-            category.image = `/uploads/${req.file.filename}`;
-        }
-
         // category_name update
         if (category_name) category.category_name = category_name;
 
+        // image update
+        if (image) category.image = image;
+
         await category.save();
 
-        res.status(200).json({ message: "Category updated successfully", category });
+        res.status(200).json({
+            message: "Category updated successfully",
+            category
+        });
     } catch (error) {
-        if (error.code === "LIMIT_FILE_SIZE") {
-            return res.status(400).json({ message: "File too large. Max 4MB allowed." });
-        }
         res.status(500).json({ error: error.message });
     }
 };
@@ -138,11 +123,11 @@ const categoryDelete = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 
 
 
 
 
-module.exports = { createCategory, singleCategory, categoryUpdate, categoryDelete,allCategory };
+module.exports = { createCategory, singleCategory, categoryUpdate, categoryDelete, allCategory };
