@@ -6,26 +6,19 @@ const path = require("path");
 
 const createBrand = async (req, res) => {
     try {
-        const { brand_name } = req.body;
-
-        if (!brand_name) {
-            return res.status(400).json({ message: "Brand name is required" });
-        }
-
-        if (!req.file) {
-            return res.status(400).json({ message: "Image file is required" });
+        const { brand_name, image } = req.body;
+        if (!brand_name || !image) {
+            return res.status(400).json({ message: "Brand name and image is required" });
         }
 
         const brand = await brandModel.create({
             brand_name,
-            image: `/uploads/${req.file.filename}`, // saved path
+            image,
         });
 
         res.status(201).json({ message: "Brand created", brand });
+
     } catch (error) {
-        if (error.code === "LIMIT_FILE_SIZE") {
-            return res.status(400).json({ message: "File too large. Max 5MB allowed." });
-        }
         res.status(500).json({ error: error.message });
     }
 };
@@ -84,38 +77,21 @@ const allBrand = async (req, res) => {
 const brandUpdate = async (req, res) => {
     try {
         const brandId = req.params.id;
-        const { brand_name } = req.body;
+        const { brand_name, image } = req.body;
 
         const brand = await brandModel.findById(brandId);
         if (!brand) {
             return res.status(404).json({ message: "Brand not found" });
         }
-
-        // ✅ যদি নতুন ফাইল আসে
-        if (req.file) {
-            if (brand.image) {
-                const oldImagePath = path.join(__dirname, "../", brand.image);
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-            }
-            brand.image = `/uploads/${req.file.filename}`;
-        }
-
         // ✅ brand_name update
         if (brand_name) brand.brand_name = brand_name;
-
+        if (image) brand.image = image;
         await brand.save();
-
-        res.status(200).json({ 
-            message: "Brand updated successfully", 
-            brand 
+        res.status(200).json({
+            message: "Brand updated successfully",
+            brand
         });
     } catch (error) {
-        console.error(error);
-        if (error.code === "LIMIT_FILE_SIZE") {
-            return res.status(400).json({ message: "File too large. Max 4MB allowed." });
-        }
         res.status(500).json({ error: error.message });
     }
 };
@@ -135,7 +111,7 @@ const brandDelete = async (req, res) => {
                 })
             )
         }
-         await brandModel.deleteOne(filter);
+        await brandModel.deleteOne(filter);
         return res.status(200).json({
             status: "success",
             msg: "Brand delete successfully"
@@ -143,7 +119,7 @@ const brandDelete = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
-}
+};
 
 
 

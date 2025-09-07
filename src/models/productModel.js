@@ -34,8 +34,20 @@ const productSchema = new Schema({
             code: { type: String }                    // যেমন "#FF0000"
         }
     ],
-    product_image: {
-        type: [String],
+    product_image_1: {
+        type: String,
+        required: true
+    },
+    product_image_2: {
+        type: String,
+        required: true
+    },
+    product_image_3: {
+        type: String,
+        required: true
+    },
+    product_image_4: {
+        type: String,
         required: true
     },
     grunte: {
@@ -46,6 +58,10 @@ const productSchema = new Schema({
     },
     product_description: {
         type: String
+    },
+    size : {
+        type : String,
+        required : true
     }
 }, { timestamps: true, versionKey: false });
 
