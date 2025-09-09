@@ -9,7 +9,7 @@ const { addWish, wishListDetails, wishList, deleteWish } = require("../controlle
 const { addToCart, cartList, cartDetails, cartDelete } = require("../controllers/cartController");
 const { createBlog, allBlog, blogByUser, blogDetails, blogUpdate, blogDelete } = require("../controllers/blogController");
 const { createInvoice } = require("../controllers/invoiceController");
-const { productSliderCreate, allSlider } = require("../controllers/productSliderController");
+const { productSliderCreate, allSlider, singleSlider, sliderUpdate, sliderDelete } = require("../controllers/productSliderController");
 const router = express.Router();
 
 // auth api 
@@ -84,7 +84,10 @@ router.post("/create-invoice", isLogin,createInvoice);
 // product slider api 
 
 router.post("/product-slider-upload", isLogin,isAdmin, productSliderCreate);
-router.get("/all-slider", allSlider)
+router.get("/all-slider", allSlider);
+router.get("/single-slider/:id", singleSlider);
+router.put("/slider-update/:id", isLogin,isAdmin,sliderUpdate );
+router.delete("/slider-delete/:id", isLogin,isAdmin, sliderDelete);
 
 
 

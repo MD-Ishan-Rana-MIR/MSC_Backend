@@ -31,14 +31,75 @@ const allSlider = async (req, res) => {
 
     } catch (error) {
 
-        errorResponse(res,500,"Something went wrong",error)
+        errorResponse(res, 500, "Something went wrong", error)
 
     }
 };
+
+const singleSlider = async (req, res) => {
+    const id = req.params.id;
+    const filter = {
+        _id: id
+    };
+    try {
+        const data = await productSliderModel.findOne(filter);
+        if (!data) {
+            errorResponse(res, 404, "Slider not found", null)
+        }
+        successResponse(res, 200, "Slider retrive successfully", data)
+    } catch (error) {
+        errorResponse(res, 500, "Something went wrong", error)
+    }
+};
+
+const sliderUpdate = async (req, res) => {
+    const id = req.params.id;
+
+    try {
+        const data = await productSliderModel.findByIdAndUpdate(
+            id, // ✅ pass only the id
+            req.body,
+            { new: true } // ✅ return updated doc, no upsert unless you need it
+        );
+
+        if (!data) {
+            return errorResponse(res, 404, "Slider not found", null);
+        }
+
+        return successResponse(res, 200, "Slider updated successfully", data);
+
+    } catch (error) {
+        console.error(error);
+        return errorResponse(res, 500, "Something went wrong", null);
+    }
+};
+
+const sliderDelete = async (req, res) => {
+    const id = req.params.id;
+    const filter = {
+        _id: id
+    }
+    try {
+        const data = await productSliderModel.findByIdAndDelete(filter);
+        if (!data) {
+            errorResponse(res, 404, "Slider not found", null)
+        }
+
+        successResponse(res, 200, "Slider delete successfully", data);
+
+    } catch (error) {
+
+        errorResponse(res, 500, "Something went worng", error)
+
+    }
+}
 
 
 
 module.exports = {
     productSliderCreate,
-    allSlider
+    allSlider,
+    singleSlider,
+    sliderUpdate,
+    sliderDelete
 }
