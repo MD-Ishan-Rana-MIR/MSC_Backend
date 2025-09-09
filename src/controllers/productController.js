@@ -184,8 +184,185 @@ const updateProduct = async (req, res) => {
 };
 
 
+const productSearch = async (req, res) => {
+    try {
+        const { product_name, price, discount_price, product_type } = req.query;
+
+        // build dynamic filter
+        const filter = {};
+
+        if (product_name) {
+            filter.product_name = { $regex: product_name, $options: "i" };
+        }
+
+        if (price) {
+            filter.price = Number(price);
+        }
+
+        if (discount_price) {
+            filter.discount_price = Number(discount_price);
+        }
+
+        if (product_type) {
+            filter.product_type = { $regex: product_type, $options: "i" };
+        }
+
+        const products = await productModel.find(filter);
+
+        res.status(200).json({
+            success: true,
+            count: products.length,
+            data: products,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server Error",
+            error: error.message,
+        });
+    }
+};
+
+
+const productByBrand = async (req, res) => {
+    const brandId = req.params.id;
+
+    try {
+        const isMatch = {
+            $match: { brand_id: new mongoose.Types.ObjectId(brandId) }
+        };
+
+        const joinWithCategoryId = {
+            $lookup: {
+                from: "categories",
+                localField: "category_id",
+                foreignField: "_id",
+                as: "category"
+            }
+        };
+
+        const unwindCategory = {
+            $unwind: { path: "$category", preserveNullAndEmptyArrays: true }
+        };
+
+        const joinWithBrandId = {
+            $lookup: {
+                from: "brands",
+                localField: "brand_id",
+                foreignField: "_id",
+                as: "brand"
+            }
+        };
+
+        const unwindBrand = {
+            $unwind: { path: "$brand", preserveNullAndEmptyArrays: true }
+        };
+
+        const product = await productModel.aggregate([
+            isMatch,
+            joinWithCategoryId,
+            unwindCategory,
+            joinWithBrandId,
+            unwindBrand
+        ]);
+
+        if (!product || product.length === 0) {
+            return res.status(404).json({
+                status: "fail",
+                msg: "No products found for this brand"
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            msg: "Products retrieved successfully",
+            count: product.length,
+            data: product // ✅ return full list
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: "error",
+            msg: "Something went wrong",
+            error: error.message
+        });
+    }
+};
+
+const productByCategory = async (req, res) => {
+    const categoryId = req.params.id;
+
+    try {
+        const isMatch = {
+            $match: { category_id: new mongoose.Types.ObjectId(categoryId) }
+        };
+
+        const joinWithCategoryId = {
+            $lookup: {
+                from: "categories",
+                localField: "category_id",
+                foreignField: "_id",
+                as: "category"
+            }
+        };
+
+        const unwindCategory = {
+            $unwind: { path: "$category", preserveNullAndEmptyArrays: true }
+        };
+
+        const joinWithBrandId = {
+            $lookup: {
+                from: "brands",
+                localField: "brand_id",
+                foreignField: "_id",
+                as: "brand"
+            }
+        };
+
+        const unwindBrand = {
+            $unwind: { path: "$brand", preserveNullAndEmptyArrays: true }
+        };
+
+        const product = await productModel.aggregate([
+            isMatch,
+            joinWithCategoryId,
+            unwindCategory,
+            joinWithBrandId,
+            unwindBrand
+        ]);
+
+        if (!product || product.length === 0) {
+            return res.status(404).json({
+                status: "fail",
+                msg: "No products found for this brand"
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            msg: "Products by category retrieved successfully",
+            count: product.length,
+            data: product // ✅ return full list
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: "error",
+            msg: "Something went wrong",
+            error: error.message
+        });
+    }
+};
+
+
 module.exports = {
     createProduct,
     updateProduct,
-    singleProduct
+    singleProduct,
+    productSearch,
+    productByBrand,
+    productByCategory,
+    productByCategory
 }
