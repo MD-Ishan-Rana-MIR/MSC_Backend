@@ -10,6 +10,7 @@ const { addToCart, cartList, cartDetails, cartDelete } = require("../controllers
 const { createBlog, allBlog, blogByUser, blogDetails, blogUpdate, blogDelete } = require("../controllers/blogController");
 const { createInvoice } = require("../controllers/invoiceController");
 const { productSliderCreate, allSlider, singleSlider, sliderUpdate, sliderDelete } = require("../controllers/productSliderController");
+const { userSubcribe, userSendEmail, allSubcriber } = require("../controllers/subcribeController");
 const router = express.Router();
 
 // auth api 
@@ -91,7 +92,11 @@ router.delete("/slider-delete/:id", isLogin,isAdmin, sliderDelete);
 
 
 
+// subcribe api 
 
+router.post("/subcribe", userSubcribe );
+router.post("/user-send-email", isLogin,isAdmin, userSendEmail );
+router.get("/all-subcriber",isLogin,isAdmin,allSubcriber);
 
 
 
