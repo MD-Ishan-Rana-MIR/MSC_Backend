@@ -186,26 +186,23 @@ const updateProduct = async (req, res) => {
 
 const productSearch = async (req, res) => {
     try {
-        const { product_name, price, discount_price, product_type } = req.query;
+        const { searchValue } = req.params; // single param
 
-        // build dynamic filter
-        const filter = {};
-
-        if (product_name) {
-            filter.product_name = { $regex: product_name, $options: "i" };
+        if (!searchValue) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide a search value",
+            });
         }
 
-        if (price) {
-            filter.price = Number(price);
-        }
-
-        if (discount_price) {
-            filter.discount_price = Number(discount_price);
-        }
-
-        if (product_type) {
-            filter.product_type = { $regex: product_type, $options: "i" };
-        }
+        // Build filter to search across multiple fields
+        const filter = {
+            $or: [
+                { product_name: { $regex: searchValue, $options: "i" } },
+                { product_type: { $regex: searchValue, $options: "i" } },
+                { price: Number(searchValue) || -1 }, // try to match number
+            ],
+        };
 
         const products = await productModel.find(filter);
 
@@ -222,6 +219,8 @@ const productSearch = async (req, res) => {
         });
     }
 };
+
+
 
 
 const productByBrand = async (req, res) => {
