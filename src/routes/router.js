@@ -47,7 +47,7 @@ router.delete("/brand-delete/:id", isLogin, isAdmin, brandDelete);
 router.post("/product-upload", isLogin, isAdmin, createProduct);
 router.get("/single-product/:id", singleProduct);
 router.put("/update/:id", isLogin, isAdmin, updateProduct);
-router.get(`/product-search`, productSearch);
+router.get(`/product-search/:searchValue`, productSearch);
 router.get("/product-by-brand/:id",productByBrand);
 router.get("/product-by-category/:id", productByCategory )
 

@@ -27,6 +27,13 @@ const router = require("./src/routes/router");
 app.use("/api/v1", router)
 
 
+app.use("/",async (req,res)=>{
+    res.status(200).json({
+        status : "success",
+        msg : "Server run successfully"
+    })
+})
+
 
 
 
