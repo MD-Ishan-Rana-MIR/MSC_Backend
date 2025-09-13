@@ -1,6 +1,7 @@
 
 const brandModel = require("../models/brandModel");
 const { errorResponse, successResponse } = require("../utility/response");
+const productModel = require("../models/productModel")
 
 
 const createBrand = async (req, res) => {
@@ -101,6 +102,12 @@ const brandDelete = async (req, res) => {
         const filter = {
             _id: brandId
         };
+
+        const checkBrand = await productModel.findOne({ brand_id: brandId });
+        if (checkBrand) {
+            errorResponse(res, 409, "This brand already in exists product", null)
+        }
+
         const brandData = await brandModel.findOne(filter);
         if (!brandData) {
             return (

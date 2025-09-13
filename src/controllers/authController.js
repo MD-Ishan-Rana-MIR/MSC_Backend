@@ -107,7 +107,7 @@ const userProfile = async (req, res) => {
         const filter = { _id: id };
 
         // Await and fix select
-        const userProfile = await userModel.findOne(filter).select("full_name email");
+        const userProfile = await userModel.findOne(filter);
 
         if (!userProfile) {
             return errorResponse(res, 404, "User not found", null);
