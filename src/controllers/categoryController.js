@@ -1,6 +1,6 @@
 const categoryModel = require("../models/categoryModel");
 const { errorResponse, successResponse } = require("../utility/response");
-
+const productModel = require("../models/productModel");
 
 const createCategory = async (req, res) => {
     try {
@@ -106,6 +106,16 @@ const categoryDelete = async (req, res) => {
         const filter = {
             _id: categoryId
         };
+
+        const checkProduct = await productModel.findOne({ category_id: categoryId })
+
+        if (checkProduct) {
+            errorResponse(res, 409, "This category already exists in product")
+        }
+
+
+
+
         const categoryData = await categoryModel.findOne(filter);
         if (!categoryData) {
             return (
