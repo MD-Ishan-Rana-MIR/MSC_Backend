@@ -1,7 +1,7 @@
 const productModel = require("../models/productModel");
 const fs = require("fs");
 const path = require("path");
-const { errorResponse } = require("../utility/response");
+const { errorResponse, successResponse } = require("../utility/response");
 const { default: mongoose } = require("mongoose");
 
 const createProduct = async (req, res) => {
@@ -221,8 +221,6 @@ const productSearch = async (req, res) => {
 };
 
 
-
-
 const productByBrand = async (req, res) => {
     const brandId = req.params.id;
 
@@ -355,6 +353,57 @@ const productByCategory = async (req, res) => {
     }
 };
 
+const allProduct = async (req, res) => {
+    try {
+        const joinWithCategoryId = {
+            $lookup: {
+                from: "categories",
+                localField: "category_id",
+                foreignField: "_id",
+                as: "category"
+            }
+        };
+
+        const unwindCategory = { $unwind: { path: "$category", preserveNullAndEmptyArrays: true } };
+
+        const joinWithBrandId = {
+            $lookup: {
+                from: "brands",
+                localField: "brand_id",
+                foreignField: "_id",
+                as: "brand"
+            }
+        };
+
+        const unwindBrand = { $unwind: { path: "$brand", preserveNullAndEmptyArrays: true } };
+
+        const product = await productModel.aggregate([
+            joinWithCategoryId,
+            unwindCategory,
+            joinWithBrandId,
+            unwindBrand
+        ]);
+
+        if (product?.length === 0) {
+            errorResponse(res, 404, "Product not found", null)
+        }
+
+        successResponse(res,200,"Product retrive successfully",product)
+
+
+
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: "error",
+            msg: "Something went wrong",
+            error: error.message
+        });
+
+    }
+}
+
 
 module.exports = {
     createProduct,
@@ -363,5 +412,6 @@ module.exports = {
     productSearch,
     productByBrand,
     productByCategory,
-    productByCategory
+    productByCategory,
+    allProduct
 }

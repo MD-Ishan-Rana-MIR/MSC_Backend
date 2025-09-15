@@ -4,7 +4,7 @@ const { isLogin, isAdmin } = require("../middleware/middleware");
 const { createCategory, singleCategory, categoryUpdate, categoryDelete, allCategory } = require("../controllers/categoryController");
 const upload = require("../middleware/imageMiddlewar");
 const { createBrand, allBrand, singleBrand, brandUpdate, brandDelete } = require("../controllers/brandController");
-const { createProduct, updateProduct, singleProduct, productSearch, productByBrand, productByCategory } = require("../controllers/productController");
+const { createProduct, updateProduct, singleProduct, productSearch, productByBrand, productByCategory, allProduct } = require("../controllers/productController");
 const { addWish, wishListDetails, wishList, deleteWish } = require("../controllers/wishController");
 const { addToCart, cartList, cartDetails, cartDelete } = require("../controllers/cartController");
 const { createBlog, allBlog, blogByUser, blogDetails, blogUpdate, blogDelete } = require("../controllers/blogController");
@@ -49,7 +49,8 @@ router.get("/single-product/:id", singleProduct);
 router.put("/update/:id", isLogin, isAdmin, updateProduct);
 router.get(`/product-search/:searchValue`, productSearch);
 router.get("/product-by-brand/:id",productByBrand);
-router.get("/product-by-category/:id", productByCategory )
+router.get("/product-by-category/:id", productByCategory );
+router.get("/all-product", allProduct )
 
 // wish related api 
 

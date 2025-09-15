@@ -30,8 +30,7 @@ const productSchema = new Schema({
     },
     product_color: [
         {
-            name: { type: String, required: true },   // যেমন "Red"
-            code: { type: String }                    // যেমন "#FF0000"
+            type : String
         }
     ],
     product_image_1: {
@@ -56,13 +55,13 @@ const productSchema = new Schema({
     in_stock: {
         type: Boolean
     },
-    product_description: {
-        type: String
-    },
-    size : {
-        type : String,
+    
+    size : [
+       {
+         type : String,
         required : true
-    },
+       }
+    ],
     product_des : {
         type : String
     }
