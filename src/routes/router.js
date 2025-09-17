@@ -68,12 +68,12 @@ router.delete("/cart-delete/:id", isLogin, cartDelete);
 
 // blog related api 
 
-router.post("/blog-create", upload.single("image"), isLogin, createBlog);
+router.post("/blog-create",isLogin, isAdmin ,createBlog);
 router.get("/all-blog", allBlog);
-router.get("/blog-by-user", isLogin, blogByUser);
+router.get("/blog-by-user", isLogin,isAdmin, blogByUser);
 router.get("/blog-details/:id", blogDetails);
-router.put("/blog-update/:id", isLogin, blogUpdate);
-router.delete(`/blog-delete/:id`, isLogin, blogDelete);
+router.put("/blog-update/:id", isLogin,isAdmin, blogUpdate);
+router.delete(`/blog-delete/:id`, isLogin,isAdmin, blogDelete);
 
 
 // invoice api 

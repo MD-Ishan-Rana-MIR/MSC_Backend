@@ -10,13 +10,8 @@ const createBlog = async (req, res) => {
     const reqBody = req.body;
     reqBody.userId = userId
     try {
-        if (!req.file) {
-            return res.status(400).json({ message: "Image file is required" });
-        }
-        const blogData = await blogModel.create({
-            ...reqBody,
-            image: `/uploads/${req.file.filename}`,
-        });
+
+        const blogData = await blogModel.create(reqBody);
         successResponse(res, 201, "Blog create successfully", blogData);
 
     } catch (error) {
@@ -176,44 +171,36 @@ const blogDetails = async (req, res) => {
 };
 
 const blogUpdate = async (req, res) => {
-    try {
-        const blogId = req.params.id;
-        const reqBody = req.body;
+  try {
+    const blogId = req.params.id;
+    const reqBody = req.body;
 
-        const blog = await blogModel.findById(blogId);
-        if (!blog) {
-            return res.status(404).json({ message: "Blog not found" });
-        }
-
-        // ✅ Handle image update
-        if (req.file) {
-            if (blog.image) {
-                const oldImagePath = path.join(__dirname, "../", blog.image);
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath); // delete old image
-                }
-            }
-            blog.image = `/uploads/${req.file.filename}`;
-        }
-
-        // ✅ Update blog fields dynamically
-        if (reqBody.title) blog.title = reqBody.title;
-        if (reqBody.description) blog.description = reqBody.description;
-
-        await blog.save();
-
-        res.status(200).json({
-            message: "Blog updated successfully",
-            blog,
-        });
-    } catch (error) {
-        if (error.code === "LIMIT_FILE_SIZE") {
-            return res
-                .status(400)
-                .json({ message: "File too large. Max 4MB allowed." });
-        }
-        res.status(500).json({ error: error.message });
+    // 🔍 Find blog
+    const blog = await blogModel.findById(blogId);
+    if (!blog) {
+      return res.status(404).json({ message: "Blog not found" });
     }
+
+    // ✅ Update only provided fields
+    if (reqBody.title) blog.title = reqBody.title;
+    if (reqBody.description) blog.description = reqBody.description;
+    if (reqBody.author) blog.author = reqBody.author;
+    if (reqBody.tags) blog.tags = reqBody.tags;
+
+    // ✅ Handle image update (if new image URL provided)
+    if (reqBody.image) {
+      blog.image = reqBody.image;
+    }
+
+    await blog.save();
+
+    res.status(200).json({
+      message: "Blog updated successfully",
+      blog,
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 
@@ -230,7 +217,7 @@ const blogDelete = async (req, res) => {
 
 
 
-        if (blogDelete?.deletedCount===0) {
+        if (blogDelete?.deletedCount === 0) {
 
             return res.status(404).json({
                 status: "fail",
