@@ -37,7 +37,7 @@ const userSendEmail = async (req, res) => {
             { product_name, product_img, description, discount_price, price }
         );
 
-        res.status(201).json({ message: "Newsletter sent successfully!" });
+        res.status(201).json({ message: "Email send successfully" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Failed to send newsletter", error });

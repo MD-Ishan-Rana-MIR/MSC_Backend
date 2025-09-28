@@ -17,10 +17,7 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    product_type: {
-        type: String,
-        required: true
-    },
+    
     price: {
         type: Number,
         required: true
@@ -28,11 +25,7 @@ const productSchema = new Schema({
     discount_price: {
         type: Number,
     },
-    product_color: [
-        {
-            type : String
-        }
-    ],
+    
     product_image_1: {
         type: String,
         required: true
@@ -49,19 +42,6 @@ const productSchema = new Schema({
         type: String,
         required: true
     },
-    grunte: {
-        type: String
-    },
-    in_stock: {
-        type: Boolean
-    },
-    
-    size : [
-       {
-         type : String,
-        required : true
-       }
-    ],
     product_des : {
         type : String
     }
