@@ -398,11 +398,13 @@ const productDelete = async (req,res)=>{
 
         const data = await productModel.deleteOne(filter);
         if(!data){
-            errorResponse
+            errorResponse(res,404,"Product not found",null);
         }
+
+        successResponse(res,200,"Product delete successfully",data);
         
     } catch (error) {
-        
+        errorResponse(res,500,"Something went wrong",error);
     }
 }
 
