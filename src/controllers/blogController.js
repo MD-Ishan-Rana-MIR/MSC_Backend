@@ -1,8 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const blogModel = require("../models/blogModel");
 const { successResponse, errorResponse } = require("../utility/response");
-const path = require("path");
-const fs = require("fs");
 
 const createBlog = async (req, res) => {
     const userId = req.headers.id;
@@ -41,6 +39,7 @@ const allBlog = async (req, res) => {
                     image: 1,
                     createdAt: 1,
                     updatedAt: 1,
+                    isPublish : 1,
                     "user._id": 1,
                     "user.full_name": 1,
                     "user.email": 1,
@@ -184,13 +183,9 @@ const blogUpdate = async (req, res) => {
     // ✅ Update only provided fields
     if (reqBody.title) blog.title = reqBody.title;
     if (reqBody.description) blog.description = reqBody.description;
-    if (reqBody.author) blog.author = reqBody.author;
-    if (reqBody.tags) blog.tags = reqBody.tags;
 
     // ✅ Handle image update (if new image URL provided)
-    if (reqBody.image) {
-      blog.image = reqBody.image;
-    }
+    if (reqBody.image) blog.image = reqBody.image;
 
     await blog.save();
 

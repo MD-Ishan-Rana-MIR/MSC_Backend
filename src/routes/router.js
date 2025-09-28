@@ -50,7 +50,7 @@ router.put("/update/:id", isLogin, isAdmin, updateProduct);
 router.get(`/product-search/:searchValue`, productSearch);
 router.get("/product-by-brand/:id",productByBrand);
 router.get("/product-by-category/:id", productByCategory );
-router.get("/all-product", allProduct )
+router.get("/all-product", allProduct );
 
 // wish related api 
 

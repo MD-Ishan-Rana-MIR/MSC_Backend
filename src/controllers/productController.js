@@ -382,7 +382,7 @@ const allProduct = async (req, res) => {
             unwindCategory,
             joinWithBrandId,
             unwindBrand
-        ]);
+        ]).sort({createdAt:-1});
 
         if (product?.length === 0) {
             errorResponse(res, 404, "Product not found", null)
@@ -408,7 +408,7 @@ const allProduct = async (req, res) => {
 module.exports = {
     createProduct,
     updateProduct,
-    singleProduct,
+    singleProduct,  
     productSearch,
     productByBrand,
     productByCategory,
