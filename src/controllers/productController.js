@@ -10,47 +10,31 @@ const createProduct = async (req, res) => {
             category_id,
             brand_id,
             product_name,
-            product_type,
             price,
             discount_price,
-            product_color,
-            size,
             product_image_1,
             product_image_2,
             product_image_3,
-            product_image_4
+            product_image_4,
+            product_des
         } = req.body;
 
-        // ✅ required fields check
-        if (!category_id || !brand_id || !product_name || !product_type || !price || !size || !product_image_1 || !product_color) {
-            return res.status(400).json({ message: "All required fields must be provided" });
-        }
+       
 
-        // ✅ product_color check (parse safely if string)
-        let parsedColors;
-        try {
-            parsedColors = typeof product_color === "string" ? JSON.parse(product_color) : product_color;
-            if (!Array.isArray(parsedColors)) {
-                throw new Error("product_color must be an array");
-            }
-        } catch (err) {
-            return res.status(400).json({ message: "Invalid product_color format. Must be a valid JSON array." });
-        }
+    
 
         // ✅ create product
         const product = await productModel.create({
             category_id,
             brand_id,
             product_name,
-            product_type,
             price,
             discount_price,
-            product_color: parsedColors,
             product_image_1,
             product_image_2,
             product_image_3,
             product_image_4,
-            size
+            product_des
         });
 
         res.status(201).json({ message: "Product uploaded successfully.", product });
@@ -402,8 +386,25 @@ const allProduct = async (req, res) => {
         });
 
     }
-}
+};
 
+
+const productDelete = async (req,res)=>{
+    const productId = req.params.id;
+    try {
+        const filter = {
+            _id : productId
+        };
+
+        const data = await productModel.deleteOne(filter);
+        if(!data){
+            errorResponse
+        }
+        
+    } catch (error) {
+        
+    }
+}
 
 module.exports = {
     createProduct,
@@ -413,5 +414,6 @@ module.exports = {
     productByBrand,
     productByCategory,
     productByCategory,
-    allProduct
+    allProduct,
+    productDelete
 }
