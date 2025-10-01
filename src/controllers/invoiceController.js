@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 const userModel = require("../models/userModel");
 const InvoiceModel = require("../models/invoiceModel");
 const InvoiceProductModel = require("../models/invoiceProductModel");
-
+const PaymentSettingModel = require("../models/PamentSettingModel");
 const createInvoice = async (req, res) => {
     const userId = req.headers.id;
     const email = req.headers.email;
@@ -122,7 +122,66 @@ const createInvoice = async (req, res) => {
 
 
         //=============Step 06: Remove Carts=====================================================================================
-        await  cartModel.deleteMany({userId:userId});
+        await cartModel.deleteMany({ userId: userId });
+
+
+
+        const paymentSetting = await PaymentSettingModel.find();
+        console.log(paymentSetting[0]["store_id"])
+
+
+        const formData = new FormData();
+
+
+        formData.append("store_id", paymentSetting[0]["store_id"]);
+        formData.append("store_passwd", paymentSetting[0]["store_passwd"]);
+        formData.append("total_amount", totalPrice.toString());
+        formData.append("currency", paymentSetting[0]["currency"]);
+        formData.append("tran_id", tran_id);
+        formData.append("product_category", "e-commerce");
+        formData.append("success_url", `${paymentSetting}[0]["success_url"]/${tran_id}`);
+        formData.append("fail_url", `${paymentSetting}[0]["fail_url"]/${tran_id}`);
+        formData.append("cancel_url", `${paymentSetting}[0]["cancel_url"]/${tran_id}`);
+        formData.append("ipn_url", `${paymentSetting}[0]["ipn_url"]/${tran_id}`);
+
+        // Customer Information
+
+        formData.append("cus_name", `${Profile[0]['cus_name']}`);
+        formData.append("cus_email", `${email}`);
+        formData.append("cus_add1", `${Profile[0]['cus_add']}`);
+        formData.append("cus_add2", `${Profile[0]['cus_add']}`);
+        formData.append("cus_city", `${Profile[0]['cus_city']}`);
+        formData.append("cus_postcode", `${Profile[0]['cus_postcode']}`);
+        formData.append("cus_country", `${Profile[0]['cus_country']}`);
+        formData.append("cus_phone", `${Profile[0]['cus_phone']}`);
+
+
+        // let cus_details = `Name:${Profile[0]['cus_name']}, Email:${email}, Address:${Profile[0]['cus_add']}, Phone:${Profile[0]['cus_phone']}`;
+        // let ship_details = `Name:${Profile[0]['ship_name']}, City:${Profile[0]['ship_city']}, Address:${Profile[0]['ship_add']}, Phone:${Profile[0]['ship_phone']}`;
+
+
+        // Shipment Information
+
+        formData.append("shipping_method", `yes`);
+
+        formData.append("ship_name", `${Profile[0]['ship_name']}`);
+        formData.append("ship_add1", `${Profile[0]['ship_add']}`);
+        formData.append("ship_add2", `${Profile[0]['ship_add']}`);
+        formData.append("ship_area", `${Profile[0]['ship_add']}`);
+        formData.append("ship_city", `${Profile[0]['ship_city']}`);
+        formData.append("ship_postcode", `${Profile[0]['ship_postcode']}`);
+        formData.append("ship_state", `${Profile[0]['ship_state']}`);
+        formData.append("ship_country", `${Profile[0]['ship_country']}`);
+
+
+        formData.append("product_name", `mern shop`);
+        formData.append("product_category", `mern shop product category `);
+        formData.append("product_profile", `mern shop product profile `);
+        formData.append("product_amount", `Accroding to invoice `);
+
+
+        const sslRes = await axios.post(paymentSetting[0]["init_url"]);
+
 
 
 
@@ -131,11 +190,9 @@ const createInvoice = async (req, res) => {
 
 
         res.status(200).json({
-            message: "Invoice created successfully",
-            email,
-            cartData
-            // totalPrice
-            // invoice: invoiceRes.data   // যদি payment gateway integrate করো
+            status: "success",
+            data: sslRes.data
+
         });
     } catch (error) {
         console.error("❌ Invoice creation error:", error);
@@ -143,6 +200,88 @@ const createInvoice = async (req, res) => {
     }
 };
 
+
+const paymentSuccess = async (req, res) => {
+    const tran_id = req.params.tran_id;
+    try {
+
+        InvoiceModel.updateOne({ tran_id: tran_id }, { payment_status: "success" });
+        return {
+            status: "success"
+        }
+
+    } catch (error) {
+        console.error("❌ Invoice creation error:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+const paymentFail = async (req, res) => {
+    const tran_id = req.params.tran_id;
+    try {
+
+        InvoiceModel.updateOne({ tran_id: tran_id }, { payment_status: "fail" });
+        return {
+            status: "success"
+        }
+
+    } catch (error) {
+        console.error("❌ Invoice creation error:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
+const paymentCancel = async (req, res) => {
+    const tran_id = req.params.tran_id;
+    try {
+
+        InvoiceModel.updateOne({ tran_id: tran_id }, { payment_status: "cancel" });
+        return {
+            status: "success"
+        }
+
+    } catch (error) {
+        console.error("❌ Invoice creation error:", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
+const paymentIpn = async (req,res)=>{
+        const tran_id = req.params.tran_id;
+        const status = req.body.status;
+    try {
+
+        InvoiceModel.updateOne({ tran_id: tran_id }, { payment_status: status });
+        return {
+            status: "success"
+        }
+
+    } catch (error) {
+        console.error("❌ Invoice creation error:", error);
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
-    createInvoice
+    createInvoice,
+    paymentSuccess,
+    paymentFail,
+    paymentCancel,
+    paymentIpn
 };

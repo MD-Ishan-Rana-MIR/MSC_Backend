@@ -8,7 +8,7 @@ const { createProduct, updateProduct, singleProduct, productSearch, productByBra
 const { addWish, wishListDetails, wishList, deleteWish } = require("../controllers/wishController");
 const { addToCart, cartList, cartDetails, cartDelete } = require("../controllers/cartController");
 const { createBlog, allBlog, blogByUser, blogDetails, blogUpdate, blogDelete } = require("../controllers/blogController");
-const { createInvoice } = require("../controllers/invoiceController");
+const { createInvoice, paymentSuccess, paymentFail, paymentCancel, paymentIpn } = require("../controllers/invoiceController");
 const { productSliderCreate, allSlider, singleSlider, sliderUpdate, sliderDelete } = require("../controllers/productSliderController");
 const { userSubcribe, userSendEmail, allSubcriber } = require("../controllers/subcribeController");
 const router = express.Router();
@@ -82,6 +82,11 @@ router.delete(`/blog-delete/:id`, isLogin,isAdmin, blogDelete);
 // invoice api 
 
 router.post("/create-invoice", isLogin,createInvoice);
+
+router.put("/PaymentSuccess/:tran_id", isLogin, paymentSuccess );
+router.put("/PaymentFail/:tran_id", isLogin, paymentFail );
+router.put("/PaymentCancel/:tran_id", isLogin, paymentCancel);
+router.put("/PaymentIpn/:tran_id", isLogin, paymentIpn);
 
 
 
