@@ -80,7 +80,7 @@ const userLogin = async (req, res) => {
 
 
 
-        const token = generateToken({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, "24h")
+        const token = generateToken({ id: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, "60d")
 
         return res.status(200).json({
             success: true,
